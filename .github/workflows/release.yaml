@@ -32,11 +32,11 @@ jobs:
       - name: Generate build files
         uses: thatisuday/go-cross-build@master
         with:
-          platforms: 'linux/amd64, darwin/amd64, windows/amd64'
-          package: 'pyprojectversionparser'
-          name: 'program'
-          compress: 'true'
-          dest: 'dist'
+          platforms: linux/amd64,darwin/amd64,windows/amd64,linux/arm64,darwin/amd64
+          package: ./
+          name: pyprojectversionparser
+          compress: false
+          dest: dist
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
