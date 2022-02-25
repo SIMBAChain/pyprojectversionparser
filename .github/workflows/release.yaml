@@ -30,7 +30,7 @@ jobs:
           golint .
 
       - name: Generate build files
-        uses: thatisuday/go-cross-build@v1
+        uses: thatisuday/go-cross-build@master
         with:
           platforms: 'linux/amd64, darwin/amd64, windows/amd64'
           package: 'pyprojectversionparser'
