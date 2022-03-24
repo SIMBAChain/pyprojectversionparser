@@ -1,9 +1,6 @@
 name: build
 
-on:
-  push:
-    branches:
-    - main
+on: ["push", "pull_request"]
 
 jobs:
   lint:
@@ -34,31 +31,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run tests
-        run: go test -v -covermode=count
-
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Go
-        if: success()
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17.x
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Calc coverage
-        run: |
-          go test -v -covermode=count -coverprofile=coverage.out
+        run: go test -v -covermode=count -coverprofile=coverage.out
       - name: Convert coverage.out to coverage.lcov
         uses: jandelgado/gcov2lcov-action@v1.0.6
       - name: Coveralls
         uses: coverallsapp/github-action@v1.1.2
         with:
+          flag-name: run-${{ matrix.platform }}
+          parallel: true
           github-token: ${{ secrets.github_token }}
           path-to-lcov: coverage.lcov
 
+  coveralls:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+
   build:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
 
