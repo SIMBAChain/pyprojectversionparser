@@ -29,13 +29,17 @@ jobs:
           go vet .
           golint .
 
+      - name: Test
+        run: |
+          go test -v
+
       - name: Build with xgo
         uses: crazy-max/ghaction-xgo@v1
         with:
           xgo_version: latest
           go_version: ${{ matrix.go_version }}
           dest: dist
-          prefix: pyprojectversionparser
+          prefix: projectversionparser
           targets: linux/amd64,linux/arm64
           v: true
           x: false

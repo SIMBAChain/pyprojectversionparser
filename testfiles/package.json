@@ -1,0 +1,6 @@
+{
+  "name": "a-node-package",
+  "version": "3.2.1",
+  "description": "a cool package",
+  "main": "index.js"
+}

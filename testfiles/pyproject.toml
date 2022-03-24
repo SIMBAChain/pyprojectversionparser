@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "a-py-package"
+version = "1.2.3"
+description = "A cool package"
+readme="README.md"
+
+packages = [
+    { include = "package" }
+]
