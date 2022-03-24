@@ -80,6 +80,22 @@ func TestNoArgs(t *testing.T) {
 	assert.PanicsWithValue(t, "os.Exit called", main, "os.Exit was not called")
 }
 
+func TestBadArgs(t *testing.T) {
+	clearOpts()
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	os.Args = []string{"cmd", "--error"}
+
+	fakeExit := func(int) {
+		panic("os.Exit called")
+	}
+
+	patch := monkey.Patch(os.Exit, fakeExit)
+	defer patch.Unpatch()
+	assert.PanicsWithValue(t, "os.Exit called", main, "os.Exit was not called")
+}
+
 func TestMainDoesntExist(t *testing.T) {
 	clearOpts()
 	oldArgs := os.Args
