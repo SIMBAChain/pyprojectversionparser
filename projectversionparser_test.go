@@ -7,7 +7,13 @@ import (
 	"testing"
 )
 
+func clearOpts() {
+	opts.Args.Path = ""
+	opts.Type = ""
+}
+
 func TestMainPyProject(t *testing.T) {
+	clearOpts()
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -16,6 +22,7 @@ func TestMainPyProject(t *testing.T) {
 }
 
 func TestMainPackageJson(t *testing.T) {
+	clearOpts()
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -24,6 +31,7 @@ func TestMainPackageJson(t *testing.T) {
 }
 
 func TestNoArgs(t *testing.T) {
+	clearOpts()
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -39,6 +47,7 @@ func TestNoArgs(t *testing.T) {
 }
 
 func TestMainDoesntExist(t *testing.T) {
+	clearOpts()
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -54,6 +63,7 @@ func TestMainDoesntExist(t *testing.T) {
 }
 
 func TestMainWithType(t *testing.T) {
+	clearOpts()
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -69,6 +79,7 @@ func TestMainWithType(t *testing.T) {
 }
 
 func TestMainWithTypeAndPath(t *testing.T) {
+	clearOpts()
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 

@@ -45,8 +45,13 @@ func main() {
 		}
 	} else if opts.Args.Path != "" && opts.Type == "" {
 		file := filepath.Base(opts.Args.Path)
-		details, err = parserMap[file].Parse(opts.Args.Path)
-		if err != nil {
+		if val, ok := parserMap[file]; ok {
+			details, err = val.Parse(opts.Args.Path)
+			if err != nil {
+				os.Exit(-1)
+			}
+		} else {
+			log.Printf("Can't find parser for %s", file)
 			os.Exit(-1)
 		}
 	} else {
