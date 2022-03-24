@@ -4,6 +4,7 @@ import (
 	"bou.ke/monkey"
 	"github.com/stretchr/testify/assert"
 	"io"
+	"log"
 	"os"
 	"testing"
 )
@@ -20,13 +21,23 @@ func Copy(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer in.Close()
+	defer func() {
+		err = in.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
 
 	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		err = out.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
 
 	_, err = io.Copy(out, in)
 	if err != nil {
@@ -145,7 +156,11 @@ func TestMainWithTypeAndPath(t *testing.T) {
 
 func TestMainNoArgsWithFile(t *testing.T) {
 	clearOpts()
-	Copy("testfiles/pyproject.toml", "./pyproject.toml")
+	err := Copy("testfiles/pyproject.toml", "./pyproject.toml")
+	if err != nil {
+		log.Print(err)
+		return
+	}
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -153,12 +168,20 @@ func TestMainNoArgsWithFile(t *testing.T) {
 
 	main()
 
-	os.Remove("./pyproject.toml")
+	err = os.Remove("./pyproject.toml")
+	if err != nil {
+		log.Print(err)
+		return
+	}
 }
 
 func TestMainNoArgsWithBadFile(t *testing.T) {
 	clearOpts()
-	Copy("testfiles/pyproject.broken.toml", "./pyproject.toml")
+	err := Copy("testfiles/pyproject.broken.toml", "./pyproject.toml")
+	if err != nil {
+		log.Print(err)
+		return
+	}
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
@@ -172,5 +195,9 @@ func TestMainNoArgsWithBadFile(t *testing.T) {
 	defer patch.Unpatch()
 	assert.PanicsWithValue(t, "os.Exit called", main, "os.Exit was not called")
 
-	os.Remove("./pyproject.toml")
+	err = os.Remove("./pyproject.toml")
+	if err != nil {
+		log.Print(err)
+		return
+	}
 }
