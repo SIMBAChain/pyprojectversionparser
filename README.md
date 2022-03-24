@@ -7,6 +7,11 @@ Simple tool for quickly grabbing the version from a pyproject.toml or package.js
 [Get the latest release here](https://github.com/SIMBAChain/pyprojectversionparser/releases/tag/v0.0.2)
 
 ### Running
+
+Running without any arguments will look for project files in the current directory and will parse the first one it finds.
+
+Running with an argument will use that as the filename to try to parse.
+
 ```bash
 $ projectversionparser ./pyproject.toml
 PACKAGE_VERSION=0.1.0
