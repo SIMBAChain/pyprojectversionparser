@@ -1,13 +1,21 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"github.com/jessevdk/go-flags"
 	"log"
 	"os"
 	"path/filepath"
 	"pyprojectversionparser/parsers"
 )
+
+var opts struct {
+	Type string `short:"t" long:"type" description:"Project type to parse" choice:"pyproject.toml" choice:"package.json"`
+	// Example of positional arguments
+	Args struct {
+		Path string `positional-arg-name:"path/to/project/file"`
+	} `positional-args:"yes"`
+}
 
 var parserMap = map[string]parsers.IParser{
 	"pyproject.toml": parsers.PyProjectDotToml{},
@@ -15,17 +23,41 @@ var parserMap = map[string]parsers.IParser{
 }
 
 func main() {
-	flag.Parse()
+	var err error
 
-	values := flag.Args()
+	_, err = flags.Parse(&opts)
+	if err != nil {
+		log.Print(err)
+		os.Exit(-2)
+	}
 
 	var details *parsers.Details
 
-	if len(values) == 0 {
+	if opts.Args.Path == "" && opts.Type != "" {
+		details, err = parserMap[opts.Type].Parse(opts.Type)
+		if err != nil {
+			os.Exit(-1)
+		}
+	} else if opts.Args.Path != "" && opts.Type != "" {
+		details, err = parserMap[opts.Type].Parse(opts.Args.Path)
+		if err != nil {
+			os.Exit(-1)
+		}
+	} else if opts.Args.Path != "" && opts.Type == "" {
+		file := filepath.Base(opts.Args.Path)
+		details, err = parserMap[file].Parse(opts.Args.Path)
+		if err != nil {
+			os.Exit(-1)
+		}
+	} else {
 		var done = false
 		for key, val := range parserMap {
 			if _, err := os.Stat(key); err == nil {
-				details, err = val.Parse(key)
+				if opts.Args.Path != "" {
+					details, err = val.Parse(opts.Args.Path)
+				} else {
+					details, err = val.Parse(key)
+				}
 				if err != nil {
 					os.Exit(-1)
 				}
@@ -37,22 +69,6 @@ func main() {
 			log.Print("No valid project files found!")
 			os.Exit(-1)
 		}
-	} else if len(values) == 1 {
-		file := filepath.Base(values[0])
-		if _, err := os.Stat(values[0]); err != nil {
-			log.Print(err)
-			os.Exit(-1)
-		}
-		parser := parserMap[file]
-		var err error
-		details, err = parser.Parse(values[0])
-		if err != nil {
-			os.Exit(-1)
-		}
-	} else {
-		fmt.Println("Usage: projectversionparser parsefile")
-		flag.PrintDefaults()
-		os.Exit(1)
 	}
 
 	fmt.Println(details.Version)

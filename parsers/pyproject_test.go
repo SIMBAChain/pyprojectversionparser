@@ -23,3 +23,14 @@ func TestPyProject(t *testing.T) {
 	}
 
 }
+
+func TestBrokenPyProject(t *testing.T) {
+	path := "../testfiles/pyproject.broken.toml"
+
+	parser := PyProjectDotToml{}
+
+	details, err := parser.Parse(path)
+
+	assert.Error(t, err, "Parse should throw an error")
+	assert.Nil(t, details, "Details should be nil")
+}

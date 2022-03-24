@@ -23,3 +23,14 @@ func TestPackageJson(t *testing.T) {
 	}
 
 }
+
+func TestBrokenPackageJson(t *testing.T) {
+	path := "../testfiles/package.broken.json"
+
+	parser := PackageDotJson{}
+
+	details, err := parser.Parse(path)
+
+	assert.Error(t, err, "Parse should throw an error")
+	assert.Nil(t, details, "Details should be nil")
+}
