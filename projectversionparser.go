@@ -58,11 +58,7 @@ func main() {
 		var done = false
 		for key, val := range parserMap {
 			if _, err := os.Stat(key); err == nil {
-				if opts.Args.Path != "" {
-					details, err = val.Parse(opts.Args.Path)
-				} else {
-					details, err = val.Parse(key)
-				}
+				details, err = val.Parse(key)
 				if err != nil {
 					os.Exit(-1)
 				}

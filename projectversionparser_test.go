@@ -201,3 +201,30 @@ func TestMainNoArgsWithBadFile(t *testing.T) {
 		return
 	}
 }
+
+func TestMainNoArgsWithBadFileSetPath(t *testing.T) {
+	clearOpts()
+	err := Copy("testfiles/pyproject.broken.toml", "./pyproject.toml")
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+
+	os.Args = []string{"cmd", "./pyproject.toml"}
+
+	fakeExit := func(int) {
+		panic("os.Exit called")
+	}
+
+	patch := monkey.Patch(os.Exit, fakeExit)
+	defer patch.Unpatch()
+	assert.PanicsWithValue(t, "os.Exit called", main, "os.Exit was not called")
+
+	err = os.Remove("./pyproject.toml")
+	if err != nil {
+		log.Print(err)
+		return
+	}
+}
