@@ -12,3 +12,15 @@ $ projectversionparser ./pyproject.toml
 PACKAGE_VERSION=0.1.0
 PACKAGE_NAME=my-package-name
 ```
+
+To set the output as env variables, use either:
+
+```bash
+$ source <(projectversionparser)
+```
+
+or 
+```bash
+$ projectversionparser > envfile
+$ source ./envfile
+```
